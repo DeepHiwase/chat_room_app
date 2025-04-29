@@ -21,13 +21,31 @@ const App = () => {
       setChats(c => c.concat(message.data));
     }
 
+    ws.onopen = () => {
+      ws.send(JSON.stringify({
+        type: 'join',
+        payload: {
+          roomId: 'red'
+        }
+      }))
+    }
+
     setSocket(ws);
+
+    return () => {
+      ws.close();
+    }
   }, [])
   
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    socket?.send(inputMessage);
+    socket?.send(JSON.stringify({
+      type: 'chat',
+      payload: {
+        message: inputMessage
+      }
+    }));
     setInputMessage('')
     // window.scrollTo(0, document.body.scrollHeight)
   }
